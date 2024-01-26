@@ -141,6 +141,7 @@
     <ClInclude Include="Dependencies\GLAD\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
+    <ClInclude Include="Source\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="Dependencies\GLAD\src\glad.c" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
