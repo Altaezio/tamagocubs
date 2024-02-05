@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include;$(ProjectDir)\Dependencies\STB</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,8 @@
     <ClInclude Include="Dependencies\GLAD\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
+    <ClInclude Include="Dependencies\STB\stb_image.h" />
+    <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\GLFW\lib-vc2022\glfw3.dll" />
+    <None Include="Source\fragments.fs" />
+    <None Include="Source\vertices.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\GLAD\src\glad.c" />
