@@ -137,13 +137,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Renderer\CubRenderer.h" />
     <ClInclude Include="Dependencies\GLAD\include\glad\glad.h" />
     <ClInclude Include="Dependencies\GLAD\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="Dependencies\STB\stb_image.h" />
+    <ClInclude Include="Source\CustomRandom.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\CoreGame\Tamagocub.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -156,9 +159,12 @@
     <None Include="Source\vertices.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Renderer\CubRenderer.cpp" />
     <ClCompile Include="Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="Source\CustomRandom.cpp" />
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\CoreGame\Tamagocub.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
