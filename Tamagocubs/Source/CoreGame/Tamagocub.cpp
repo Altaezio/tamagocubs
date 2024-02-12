@@ -1,6 +1,8 @@
 #include "Tamagocub.h"
 #include <stdlib.h>
 #include "../CustomRandom.h"
+#include "../Event.h"
+#include <iostream>
 
 using namespace std;
 
@@ -16,7 +18,7 @@ void Tamagocub::GettingHungry()
 	hunger++;
 	if (hunger == maxHunger)
 	{
-		GoToNewState(hungry);
+		GoToNewState(CubState::hungry);
 	}
 	else
 	{
@@ -26,59 +28,56 @@ void Tamagocub::GettingHungry()
 
 void Tamagocub::ChangeMood()
 {
-	if (currentState == idle)
+	if (currentState != CubState::idle)
 	{
 		return;
 	}
 
 	int randomint = CustomRandom::RandomInt(0, 3);
-	CubState nextMood = sick;
+	CubState nextMood = CubState::sick;
 	switch (randomint)
 	{
 	case 0:
-		nextMood = sick;
+		nextMood = CubState::sick;
 		break;
 	case 1:
-		nextMood = wet;
+		nextMood = CubState::wet;
 		break;
 	case 2:
-		nextMood = wontDo;
+		nextMood = CubState::wontDo;
 		break;
 	default:
 		break;
 	}
 	GoToNewState(nextMood);
-	moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
 }
 
 void Tamagocub::GoToNewState(CubState newState)
 {
-	if (currentState == idle && justCameBackIdle && hunger != maxHunger) // should only change from idle ?
+	if (currentState == CubState::idle && justCameBackIdle && hunger != maxHunger) // should only change from idle ?
 	{
 		return;
 	}
 
-	if (currentState == hungry && newState == idle) // should happen only on feeding while hungry
+	if (currentState == CubState::hungry && newState == CubState::idle) // should happen only on feeding while hungry
 	{
 		hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
 	}
 
 	currentState = newState;
 
-	for (auto callback : StateChanged)
-	{
-		callback();
-	}
+	StateChanged->fire();
 
-	if (newState == idle)
+	if (newState == CubState::idle)
 	{
 		justCameBackIdle = true;
 		timeSinceLastChanged = 0;
 	}
 }
 
-Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(idle), justCameBackIdle(true), timeSinceLastChanged(0)
+Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), justCameBackIdle(true), timeSinceLastChanged(0)
 {
+	StateChanged = new Event();
 	int randomValue = rand();
 	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
 	moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
@@ -86,6 +85,8 @@ Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), current
 
 void Tamagocub::Update(float deltaTime)
 {
+	cout << "age : " << age << " hunger : " << hunger << " moodChangeCountDown : " << moodChangeCountDown << " deltatime : " << deltaTime << endl;
+	
 	ageInSeconds += deltaTime;
 	if (ageInSeconds >= secondsPerYear)
 	{
@@ -102,6 +103,7 @@ void Tamagocub::Update(float deltaTime)
 	if (moodChangeCountDown <= 0)
 	{
 		ChangeMood();
+		moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
 	}
 
 	if (justCameBackIdle)
@@ -117,7 +119,7 @@ void Tamagocub::Update(float deltaTime)
 
 void Tamagocub::Feed()
 {
-	if (currentState == wontDo)
+	if (currentState == CubState::wontDo)
 	{
 		return;
 	}
@@ -125,7 +127,7 @@ void Tamagocub::Feed()
 	weight += weightGainPerFeeding;
 	if (hunger == maxHunger)
 	{
-		GoToNewState(idle);
+		GoToNewState(CubState::idle);
 	}
 
 	if (hunger > 0)
@@ -136,34 +138,39 @@ void Tamagocub::Feed()
 
 void Tamagocub::Heal()
 {
-	if (currentState == sick)
+	if (currentState == CubState::sick)
 	{
-		GoToNewState(idle);
+		GoToNewState(CubState::idle);
 	}
 }
 
 void Tamagocub::Clean()
 {
-	if (currentState == wet)
+	if (currentState == CubState::wet)
 	{
-		GoToNewState(idle);
+		GoToNewState(CubState::idle);
 	}
 }
 
 void Tamagocub::Dispute()
 {
-	if (currentState == wontDo)
+	if (currentState == CubState::wontDo)
 	{
-		GoToNewState(idle);
+		GoToNewState(CubState::idle);
 	}
 }
 
 void Tamagocub::DoSport()
 {
-	if (currentState == wontDo)
+	if (currentState == CubState::wontDo)
 	{
 		return;
 	}
 
 	weight -= weightLossPerDoingSport;
+}
+
+CubState Tamagocub::GetCurrentState() const
+{
+	return currentState;
 }

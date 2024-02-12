@@ -60,6 +60,9 @@ void Window::InitialiseVerticies()
 void Window::Draw()
 {
 	/* Render here */
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glBindTexture(GL_TEXTURE_2D, middleTexture);
@@ -85,7 +88,7 @@ void Window::SetNewMiddleTexture(string fileName)
 	unsigned char* data = stbi_load((filesystem::path{ "..\\Resources\\Static\\" }.append(fileName)).string().c_str(), &width, &height, &numberChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else

@@ -1,7 +1,7 @@
 #pragma once
 #include "../Window.h"
-#include "../CoreGame/Tamagocub.h"
 
+class Tamagocub;
 
 class CubRenderer
 {

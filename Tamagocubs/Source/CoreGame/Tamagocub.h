@@ -1,11 +1,17 @@
 #pragma once
 #include <list>
+
+class Event;
+
+enum class CubState { idle, hungry, sick, wet, wontDo };
+
 class Tamagocub
 {
+
 private:
 	unsigned age;
 	float ageInSeconds;
-	const float secondsPerYear = 21600; // 6h
+	const float secondsPerYear = 216; // 21600s = 6h
 
 	float weight;
 	const float weightGainPerFeeding = 2;
@@ -14,18 +20,17 @@ private:
 
 	unsigned hunger;
 	const unsigned maxHunger = 5;
-	const float timeToGetOneHunger = 1800; // 30min
-	const float timeHungerOffset = 600;
+	const float timeToGetOneHunger = 18; // 1800s = 30min
+	const float timeHungerOffset = 6;
 	float hungerCountDown;
 
-	enum CubState { idle, hungry, sick, wet, wontDo };
 	CubState currentState;
-	const float cooldownBetweenChangedState = 60;
+	const float cooldownBetweenChangedState = 6;
 	bool justCameBackIdle;
 	float timeSinceLastChanged;
 
-	const float timeBetweenMoodChange = 2700; // 45min
-	const float timeBetweenMoodChangeOffset = 900; // 15min
+	const float timeBetweenMoodChange = 27; // 2700 = 45min
+	const float timeBetweenMoodChangeOffset = 9; // 900 = 15min
 	float moodChangeCountDown;
 
 	void HappyBirthday();
@@ -45,5 +50,7 @@ public:
 	void Dispute();
 	void DoSport();
 
-	std::list<void ()> StateChanged;
+	CubState GetCurrentState() const;
+
+	Event* StateChanged;
 };
