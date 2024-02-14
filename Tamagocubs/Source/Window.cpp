@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Shader.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <iostream>
@@ -6,7 +7,7 @@
 
 using namespace std;
 
-Window* Window::Instance = NULL;
+Window* Window::Instance = nullptr;
 
 Window* Window::GetInstance()
 {
@@ -82,7 +83,10 @@ void Window::SetNewMiddleTexture(string fileName)
 {
 	glGenTextures(1, &middleTexture);
 	glBindTexture(GL_TEXTURE_2D, middleTexture);
-	
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	int width, height, numberChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load((filesystem::path{ "..\\Resources\\Static\\" }.append(fileName)).string().c_str(), &width, &height, &numberChannels, 0);

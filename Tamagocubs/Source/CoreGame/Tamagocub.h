@@ -1,9 +1,8 @@
 #pragma once
 #include <list>
+#include "../Enums.h"
 
 class Event;
-
-enum class CubState { idle, hungry, sick, wet, wontDo };
 
 class Tamagocub
 {
@@ -37,7 +36,12 @@ private:
 	void GettingHungry();
 	void ChangeMood();
 
-	void GoToNewState(CubState newState);
+	/// <summary>
+	/// Change current state of the tamacub
+	/// </summary>
+	/// <param name="newState">the new state the tamacub should go to</param>
+	/// <returns>True if the state actually changed</returns>
+	bool GoToNewState(CubState newState);
 
 public:
 	Tamagocub();
@@ -53,4 +57,10 @@ public:
 	CubState GetCurrentState() const;
 
 	Event* StateChanged;
+	Event* FinishedIdling;
+	Event* FeedActionExecuted;
+	Event* HealActionExecuted;
+	Event* CleanActionExecuted;
+	Event* DisputeActionExecuted;
+	Event* DoSportActionExecuted;
 };

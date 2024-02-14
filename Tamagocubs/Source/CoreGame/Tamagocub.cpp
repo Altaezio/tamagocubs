@@ -10,20 +10,19 @@ void Tamagocub::HappyBirthday()
 {
 	age++;
 	ageInSeconds -= secondsPerYear;
+	cout << "Happy birthday !! Age : " << age << endl;
 }
 
 void Tamagocub::GettingHungry()
 {
-	weight -= weightLossPerGettingHungry;
-	hunger++;
+	weight -= max(0.0f, weight - weightLossPerGettingHungry);
+	hunger = min(maxHunger, hunger + 1);
 	if (hunger == maxHunger)
 	{
 		GoToNewState(CubState::hungry);
 	}
-	else
-	{
-		hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
-	}
+	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
+	cout << "Getting hungry : " << hunger << "/" << maxHunger << endl;
 }
 
 void Tamagocub::ChangeMood()
@@ -52,11 +51,11 @@ void Tamagocub::ChangeMood()
 	GoToNewState(nextMood);
 }
 
-void Tamagocub::GoToNewState(CubState newState)
+bool Tamagocub::GoToNewState(CubState newState)
 {
 	if (currentState == CubState::idle && justCameBackIdle && hunger != maxHunger) // should only change from idle ?
 	{
-		return;
+		return false;
 	}
 
 	if (currentState == CubState::hungry && newState == CubState::idle) // should happen only on feeding while hungry
@@ -65,6 +64,7 @@ void Tamagocub::GoToNewState(CubState newState)
 	}
 
 	currentState = newState;
+	cout << "Mood changed : " << (int)currentState << endl;
 
 	StateChanged->fire();
 
@@ -73,11 +73,18 @@ void Tamagocub::GoToNewState(CubState newState)
 		justCameBackIdle = true;
 		timeSinceLastChanged = 0;
 	}
+	return true;
 }
 
 Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), justCameBackIdle(true), timeSinceLastChanged(0)
 {
 	StateChanged = new Event();
+	FinishedIdling = new Event();
+	 FeedActionExecuted = new Event();
+	 HealActionExecuted = new Event();
+	CleanActionExecuted = new Event();
+	DisputeActionExecuted = new Event();
+	DoSportActionExecuted = new Event();
 	int randomValue = rand();
 	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
 	moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
@@ -85,8 +92,6 @@ Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), current
 
 void Tamagocub::Update(float deltaTime)
 {
-	cout << "age : " << age << " hunger : " << hunger << " moodChangeCountDown : " << moodChangeCountDown << " deltatime : " << deltaTime << endl;
-	
 	ageInSeconds += deltaTime;
 	if (ageInSeconds >= secondsPerYear)
 	{
@@ -113,6 +118,9 @@ void Tamagocub::Update(float deltaTime)
 		{
 			justCameBackIdle = false;
 			timeSinceLastChanged = 0;
+			FinishedIdling->fire();
+
+			cout << "Not just came back from idling anymore" << endl;
 		}
 	}
 }
@@ -125,6 +133,10 @@ void Tamagocub::Feed()
 	}
 
 	weight += weightGainPerFeeding;
+	FeedActionExecuted->fire();
+
+	cout << "Eat your vegetables ! You're fater : " << weight << " but less hungry : " << hunger << endl;
+
 	if (hunger == maxHunger)
 	{
 		GoToNewState(CubState::idle);
@@ -140,7 +152,11 @@ void Tamagocub::Heal()
 {
 	if (currentState == CubState::sick)
 	{
-		GoToNewState(CubState::idle);
+		if (GoToNewState(CubState::idle))
+		{
+			HealActionExecuted->fire();
+			cout << "Here you are little bug." << endl;
+		}
 	}
 }
 
@@ -148,7 +164,11 @@ void Tamagocub::Clean()
 {
 	if (currentState == CubState::wet)
 	{
-		GoToNewState(CubState::idle);
+		if (GoToNewState(CubState::idle))
+		{
+			CleanActionExecuted->fire();
+			cout << "Shiny like chrome" << endl;
+		}
 	}
 }
 
@@ -156,7 +176,11 @@ void Tamagocub::Dispute()
 {
 	if (currentState == CubState::wontDo)
 	{
-		GoToNewState(CubState::idle);
+		if (GoToNewState(CubState::idle))
+		{
+			DisputeActionExecuted->fire();
+			cout << "OBEY ME" << endl;
+		}
 	}
 }
 
@@ -167,7 +191,9 @@ void Tamagocub::DoSport()
 		return;
 	}
 
-	weight -= weightLossPerDoingSport;
+	weight = max(0.0f, weight - weightLossPerDoingSport);
+	DoSportActionExecuted->fire();
+	cout << "Litlle bit of sport won't hurt. You're less fat : " << weight << endl;
 }
 
 CubState Tamagocub::GetCurrentState() const

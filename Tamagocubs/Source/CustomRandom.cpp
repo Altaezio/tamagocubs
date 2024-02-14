@@ -8,7 +8,7 @@ void CustomRandom::SetSeed()
 
 int CustomRandom::RandomInt(int min, int max)
 {
-	return ((max - min) * (rand() / RAND_MAX)) + min;
+	return min + rand() % max;
 }
 
 float CustomRandom::RandomFloat(float min, float max)

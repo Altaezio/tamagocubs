@@ -4,6 +4,8 @@
 #include "CoreGame/Tamagocub.h"
 #include "Renderer/CubRenderer.h"
 #include <chrono>
+#include <iostream>
+#include "KeyInput.h"
 
 int main(void)
 {
@@ -33,17 +35,20 @@ int main(void)
 	Tamagocub* tamagocub = new Tamagocub();
 	CubRenderer* cubRenderer = new CubRenderer(myWindow, tamagocub);
 
+	KeyInput* keyInput = KeyInput::InitialiseInputs(myWindow, tamagocub);
+
 	myWindow->InitialiseVerticies();
 	myWindow->SetNewMiddleTexture("Idle.png");
 
-	std::chrono::time_point<std::chrono::system_clock> then = std::chrono::system_clock::now();
+	double then = glfwGetTime();
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-		float deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count() / 1000.0f;
+		double now = glfwGetTime();
+		float deltaTime = now - then;
 		myWindow->Draw();
 		tamagocub->Update(deltaTime);
+		cubRenderer->Update(deltaTime);
 		then = now;
 	}
 
