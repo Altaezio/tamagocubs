@@ -1,0 +1,5 @@
+Nourrir : F (Feed)
+Réconforter : H (Heal)
+Laver : C (Clean)
+Disputer : D (Dispute)
+Faire du sport : S (Sport)

@@ -16,6 +16,38 @@ const string healFile = "Heal.png";
 const string cleanFile = "Clean.png";
 const string doSport = "Sport.png";
 
+
+CubRenderer::CubRenderer(Window* window, Tamagocub* tamagocub) : window(window), tamagocub(tamagocub), actionTriggered(false), actionTimeLeft(actionShownTime)
+{
+	IEventCallback* callbackState = new EventCallback(this, &CubRenderer::OnStateChanged);
+	tamagocub->StateChanged->addListener(callbackState);
+	IEventCallback* callbackFeed = new EventCallback(this, &CubRenderer::OnFeedActionExecuted);
+	tamagocub->FeedActionExecuted->addListener(callbackFeed);
+	IEventCallback* callbackHeal = new EventCallback(this, &CubRenderer::OnHealActionExecuted);
+	tamagocub->HealActionExecuted->addListener(callbackHeal);
+	IEventCallback* callbackClean = new EventCallback(this, &CubRenderer::OnCleanActionExecuted);
+	tamagocub->CleanActionExecuted->addListener(callbackClean);
+	IEventCallback* callbackDispute = new EventCallback(this, &CubRenderer::OnDisputeActionExecuted);
+	tamagocub->DisputeActionExecuted->addListener(callbackDispute);
+	IEventCallback* callbackDoSport = new EventCallback(this, &CubRenderer::OnDoSportActionExecuted);
+	tamagocub->DoSportActionExecuted->addListener(callbackDoSport);
+
+	OnStateChanged();
+}
+
+void CubRenderer::Update(float deltaTime)
+{
+	if (actionTriggered)
+	{
+		actionTimeLeft -= deltaTime;
+		if (actionTimeLeft <= 0)
+		{
+			actionTriggered = false;
+			OnStateChanged();
+			actionTimeLeft = actionShownTime;
+		}
+	}
+}
 void CubRenderer::OnStateChanged()
 {
 	CubState currentState = tamagocub->GetCurrentState();
@@ -97,34 +129,4 @@ void CubRenderer::OnActionExecuted(TamActions action)
 	}
 	window->SetNewMiddleTexture(fileName);
 	actionTriggered = true;
-}
-
-CubRenderer::CubRenderer(Window* window, Tamagocub* tamagocub) : window(window), tamagocub(tamagocub), actionTriggered(false), actionTimeLeft(actionShownTime)
-{
-	IEventCallback* callbackState = new EventCallback(this, &CubRenderer::OnStateChanged);
-	tamagocub->StateChanged->addListener(callbackState);
-	IEventCallback* callbackFeed = new EventCallback(this, &CubRenderer::OnFeedActionExecuted);
-	tamagocub->FeedActionExecuted->addListener(callbackFeed);
-	IEventCallback* callbackHeal = new EventCallback(this, &CubRenderer::OnHealActionExecuted);
-	tamagocub->HealActionExecuted->addListener(callbackHeal);
-	IEventCallback* callbackClean = new EventCallback(this, &CubRenderer::OnCleanActionExecuted);
-	tamagocub->CleanActionExecuted->addListener(callbackClean);
-	IEventCallback* callbackDispute = new EventCallback(this, &CubRenderer::OnDisputeActionExecuted);
-	tamagocub->DisputeActionExecuted->addListener(callbackDispute);
-	IEventCallback* callbackDoSport = new EventCallback(this, &CubRenderer::OnDoSportActionExecuted);
-	tamagocub->DoSportActionExecuted->addListener(callbackDoSport);
-}
-
-void CubRenderer::Update(float deltaTime)
-{
-	if (actionTriggered)
-	{
-		actionTimeLeft -= deltaTime;
-		if (actionTimeLeft <= 0)
-		{
-			actionTriggered = false;
-			OnStateChanged();
-			actionTimeLeft = actionShownTime;
-		}
-	}
 }

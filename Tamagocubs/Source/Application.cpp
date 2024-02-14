@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include "KeyInput.h"
+#include "DataSaver.h"
 
 int main(void)
 {
@@ -32,13 +33,19 @@ int main(void)
 		return -1;
 	}
 
-	Tamagocub* tamagocub = new Tamagocub();
+	Tamagocub* tamagocub = DataSaver::LoadOrCreateTamagocub();
+	if (!tamagocub)
+	{
+		std::cout << "ERROR : loading tamagocub" << std::endl;
+		return -1;
+	}
+
 	CubRenderer* cubRenderer = new CubRenderer(myWindow, tamagocub);
 
 	KeyInput* keyInput = KeyInput::InitialiseInputs(myWindow, tamagocub);
 
 	myWindow->InitialiseVerticies();
-	myWindow->SetNewMiddleTexture("Idle.png");
+	//myWindow->SetNewMiddleTexture("Idle.png");
 
 	double then = glfwGetTime();
 	/* Loop until the user closes the window */
@@ -51,6 +58,8 @@ int main(void)
 		cubRenderer->Update(deltaTime);
 		then = now;
 	}
+
+	DataSaver::SaveProgress(tamagocub);
 
 	glfwTerminate();
 	return 0;

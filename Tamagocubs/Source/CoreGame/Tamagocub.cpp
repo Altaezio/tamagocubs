@@ -6,82 +6,12 @@
 
 using namespace std;
 
-void Tamagocub::HappyBirthday()
-{
-	age++;
-	ageInSeconds -= secondsPerYear;
-	cout << "Happy birthday !! Age : " << age << endl;
-}
-
-void Tamagocub::GettingHungry()
-{
-	weight -= max(0.0f, weight - weightLossPerGettingHungry);
-	hunger = min(maxHunger, hunger + 1);
-	if (hunger == maxHunger)
-	{
-		GoToNewState(CubState::hungry);
-	}
-	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
-	cout << "Getting hungry : " << hunger << "/" << maxHunger << endl;
-}
-
-void Tamagocub::ChangeMood()
-{
-	if (currentState != CubState::idle)
-	{
-		return;
-	}
-
-	int randomint = CustomRandom::RandomInt(0, 3);
-	CubState nextMood = CubState::sick;
-	switch (randomint)
-	{
-	case 0:
-		nextMood = CubState::sick;
-		break;
-	case 1:
-		nextMood = CubState::wet;
-		break;
-	case 2:
-		nextMood = CubState::wontDo;
-		break;
-	default:
-		break;
-	}
-	GoToNewState(nextMood);
-}
-
-bool Tamagocub::GoToNewState(CubState newState)
-{
-	if (currentState == CubState::idle && justCameBackIdle && hunger != maxHunger) // should only change from idle ?
-	{
-		return false;
-	}
-
-	if (currentState == CubState::hungry && newState == CubState::idle) // should happen only on feeding while hungry
-	{
-		hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
-	}
-
-	currentState = newState;
-	cout << "Mood changed : " << (int)currentState << endl;
-
-	StateChanged->fire();
-
-	if (newState == CubState::idle)
-	{
-		justCameBackIdle = true;
-		timeSinceLastChanged = 0;
-	}
-	return true;
-}
-
-Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), justCameBackIdle(true), timeSinceLastChanged(0)
+Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), timeSinceLastChanged(0)
 {
 	StateChanged = new Event();
 	FinishedIdling = new Event();
-	 FeedActionExecuted = new Event();
-	 HealActionExecuted = new Event();
+	FeedActionExecuted = new Event();
+	HealActionExecuted = new Event();
 	CleanActionExecuted = new Event();
 	DisputeActionExecuted = new Event();
 	DoSportActionExecuted = new Event();
@@ -111,12 +41,11 @@ void Tamagocub::Update(float deltaTime)
 		moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
 	}
 
-	if (justCameBackIdle)
+	if (justCameBackIdle())
 	{
 		timeSinceLastChanged += deltaTime;
 		if (timeSinceLastChanged >= cooldownBetweenChangedState)
 		{
-			justCameBackIdle = false;
 			timeSinceLastChanged = 0;
 			FinishedIdling->fire();
 
@@ -199,4 +128,73 @@ void Tamagocub::DoSport()
 CubState Tamagocub::GetCurrentState() const
 {
 	return currentState;
+}
+
+void Tamagocub::HappyBirthday()
+{
+	age++;
+	ageInSeconds -= secondsPerYear;
+	cout << "Happy birthday !! Age : " << age << endl;
+}
+
+void Tamagocub::GettingHungry()
+{
+	weight -= max(0.0f, weight - weightLossPerGettingHungry);
+	hunger = min(maxHunger, hunger + 1);
+	if (hunger == maxHunger)
+	{
+		GoToNewState(CubState::hungry);
+	}
+	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
+	cout << "Getting hungry : " << hunger << "/" << maxHunger << endl;
+}
+
+void Tamagocub::ChangeMood()
+{
+	if (currentState != CubState::idle)
+	{
+		return;
+	}
+
+	int randomint = CustomRandom::RandomInt(0, 3);
+	CubState nextMood = CubState::sick;
+	switch (randomint)
+	{
+	case 0:
+		nextMood = CubState::sick;
+		break;
+	case 1:
+		nextMood = CubState::wet;
+		break;
+	case 2:
+		nextMood = CubState::wontDo;
+		break;
+	default:
+		break;
+	}
+	GoToNewState(nextMood);
+}
+
+bool Tamagocub::GoToNewState(CubState newState)
+{
+	if (currentState == CubState::idle && justCameBackIdle() && hunger != maxHunger) // should only change from idle ?
+	{
+		return false;
+	}
+
+	if (currentState == CubState::hungry && newState == CubState::idle) // should happen only on feeding while hungry
+	{
+		hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
+	}
+
+	currentState = newState;
+	cout << "Mood changed : " << (int)currentState << endl;
+
+	StateChanged->fire();
+
+	if (newState == CubState::idle)
+	{
+		timeSinceLastChanged = 0;
+	}
+	return true;
 }

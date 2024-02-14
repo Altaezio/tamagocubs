@@ -6,6 +6,11 @@ class Tamagocub;
 
 class CubRenderer
 {
+public:
+	CubRenderer(Window* window, Tamagocub* tamagocub);
+
+	void Update(float deltaTime);
+
 private:
 	Window* window;
 	Tamagocub* tamagocub;
@@ -21,10 +26,5 @@ private:
 	const float actionShownTime = 3;
 	bool actionTriggered;
 	float actionTimeLeft;
-
-public:
-	CubRenderer(Window* window, Tamagocub* tamagocub);
-
-	void Update(float deltaTime);
 };
 

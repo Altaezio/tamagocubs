@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include;$(ProjectDir)\Dependencies\STB</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\DataSaver.h" />
     <ClInclude Include="Source\Enums.h" />
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\EventCallback.h" />
@@ -163,6 +164,7 @@
     <None Include="Source\vertices.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DataSaver.cpp" />
     <ClCompile Include="Source\Event.cpp" />
     <ClCompile Include="Source\KeyInput.cpp" />
     <ClCompile Include="Source\Renderer\CubRenderer.cpp" />
