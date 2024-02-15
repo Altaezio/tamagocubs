@@ -64,8 +64,6 @@ void Tamagocub::Feed()
 	weight += weightGainPerFeeding;
 	FeedActionExecuted->fire();
 
-	cout << "Eat your vegetables ! You're fater : " << weight << " but less hungry : " << hunger << endl;
-
 	if (hunger == maxHunger)
 	{
 		GoToNewState(CubState::idle);
@@ -75,6 +73,8 @@ void Tamagocub::Feed()
 	{
 		hunger--;
 	}
+
+	cout << "Eat your vegetables ! You're fater : " << weight << " but less hungry : " << hunger << endl;
 }
 
 void Tamagocub::Heal()

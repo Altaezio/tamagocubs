@@ -89,7 +89,7 @@ void Window::SetNewMiddleTexture(string fileName)
 
 	int width, height, numberChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load((filesystem::path{ "..\\Resources\\Static\\" }.append(fileName)).string().c_str(), &width, &height, &numberChannels, 0);
+	unsigned char* data = stbi_load((filesystem::path{ "Resources\\Static\\" }.append(fileName)).string().c_str(), &width, &height, &numberChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -104,7 +104,7 @@ void Window::SetNewMiddleTexture(string fileName)
 
 Window::Window()
 {
-	window = glfwCreateWindow(WindowWidth, WindowHeight, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(WindowWidth, WindowHeight, "Tamagocub", nullptr, nullptr);
 }
 
 Window::~Window()
