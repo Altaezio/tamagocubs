@@ -3,7 +3,7 @@
 
 void CustomRandom::SetSeed()
 {
-	std::srand(std::time(nullptr));
+	std::srand((unsigned)std::time(nullptr));
 }
 
 int CustomRandom::RandomInt(int min, int max)

@@ -1,9 +1,10 @@
 #pragma once
 #include <list>
 #include "../Enums.h"
+#include "../Event.h"
+
 
 class DataSaver;
-class Event;
 
 class Tamagocub
 {
@@ -20,13 +21,9 @@ public:
 
 	CubState GetCurrentState() const;
 
-	Event* StateChanged;
-	Event* FinishedIdling;
-	Event* FeedActionExecuted;
-	Event* HealActionExecuted;
-	Event* CleanActionExecuted;
-	Event* DisputeActionExecuted;
-	Event* DoSportActionExecuted;
+	Event<>* StateChanged;
+	Event<>* FinishedIdling;
+	Event<TamActions>* ActionExecuted;
 
 private:
 	unsigned age;

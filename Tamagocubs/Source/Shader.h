@@ -2,6 +2,7 @@
 
 #pragma once
 #include <glad/glad.h> // include glad to get all the required OpenGL headers
+#include <glm.hpp>
 
 #include <string>
 #include <fstream>
@@ -88,6 +89,16 @@ public:
 	void setFloat(const std::string& name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+	}
+
+	void setVector3f(const std::string& name, glm::vec3 value) const
+	{
+		glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
+	}
+
+	void setMatrix4(const std::string& name, glm::mat4x4 value) const
+	{
+		glUniform4f(glGetUniformLocation(ID, name.c_str()), value[0][0], value[1][0], value[0][1], value[1][1]);
 	}
 
 private:

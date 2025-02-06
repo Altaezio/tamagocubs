@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "Shader.h"
+#include "Renderer\TextRenderer.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <iostream>
@@ -58,6 +59,16 @@ void Window::InitialiseVerticies()
 	glBindVertexArray(0);
 }
 
+void Window::InitialiseTextShader()
+{
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	textRenderer = new TextRenderer(WindowWidth, WindowHeight);
+	textRenderer->Load("Source\\Renderer\\font.TTF", 24);
+}
+
 void Window::Draw()
 {
 	/* Render here */
@@ -71,6 +82,10 @@ void Window::Draw()
 	shader->use();
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	textRenderer->TextShader->use();
+	RenderText(shader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	RenderText(shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
 	/* Swap front and back buffers */
 	glfwSwapBuffers(window);

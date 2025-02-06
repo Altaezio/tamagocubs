@@ -60,6 +60,9 @@
     <ClInclude Include="Source\DataSaver.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Renderer\TextRenderer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -70,6 +73,8 @@
     <None Include="Dependencies\GLFW\lib-vc2022\glfw3.dll" />
     <None Include="Source\vertices.vs" />
     <None Include="Source\fragments.fs" />
+    <None Include="Source\text.vs" />
+    <None Include="Source\text.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\GLAD\src\glad.c">
@@ -97,6 +102,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Source\DataSaver.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\TextRenderer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

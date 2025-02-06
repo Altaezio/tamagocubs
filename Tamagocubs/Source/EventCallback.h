@@ -1,20 +1,26 @@
 #pragma once
 
+template<class... Args>
 class IEventCallback
 {
 public:
-	virtual void operator() () = 0;
+	virtual void operator() (Args... args) = 0;
 };
 
-template<typename T>
-class EventCallback : public IEventCallback
+template<typename T, class... Args>
+class EventCallback : public IEventCallback<Args...>
 {
 public:
-	EventCallback(T* instance, void (T::* function)())
-		: instance(instance), function(function) {}
-	virtual void operator () () override { (instance->*function)(); }
+	EventCallback(T* instance, void (T::* function)(Args... args))
+		: instance(instance), function(function)
+	{
+	}
+	virtual void operator () (Args... args) override
+	{
+		(instance->*function)(args...);
+	}
 
 private:
-	void (T::* function)();
+	void (T::* function)(Args... a);
 	T* instance;
 };

@@ -2,6 +2,7 @@
 #include "../CoreGame/Tamagocub.h"
 #include "../Event.h"
 #include "../EventCallback.h"
+#include "TextRenderer.h"
 
 using namespace std;
 
@@ -19,18 +20,7 @@ const string doSport = "Sport.png";
 
 CubRenderer::CubRenderer(Window* window, Tamagocub* tamagocub) : window(window), tamagocub(tamagocub), actionTriggered(false), actionTimeLeft(actionShownTime)
 {
-	IEventCallback* callbackState = new EventCallback(this, &CubRenderer::OnStateChanged);
-	tamagocub->StateChanged->addListener(callbackState);
-	IEventCallback* callbackFeed = new EventCallback(this, &CubRenderer::OnFeedActionExecuted);
-	tamagocub->FeedActionExecuted->addListener(callbackFeed);
-	IEventCallback* callbackHeal = new EventCallback(this, &CubRenderer::OnHealActionExecuted);
-	tamagocub->HealActionExecuted->addListener(callbackHeal);
-	IEventCallback* callbackClean = new EventCallback(this, &CubRenderer::OnCleanActionExecuted);
-	tamagocub->CleanActionExecuted->addListener(callbackClean);
-	IEventCallback* callbackDispute = new EventCallback(this, &CubRenderer::OnDisputeActionExecuted);
-	tamagocub->DisputeActionExecuted->addListener(callbackDispute);
-	IEventCallback* callbackDoSport = new EventCallback(this, &CubRenderer::OnDoSportActionExecuted);
-	tamagocub->DoSportActionExecuted->addListener(callbackDoSport);
+	tamagocub->ActionExecuted->addListener(new EventCallback(this, &CubRenderer::OnActionExecuted));
 
 	OnStateChanged();
 }
@@ -47,6 +37,7 @@ void CubRenderer::Update(float deltaTime)
 			actionTimeLeft = actionShownTime;
 		}
 	}
+	window->textRenderer->RenderText("Bonjour", 5.0f, 5.0f, 1.0f);
 }
 void CubRenderer::OnStateChanged()
 {
@@ -67,40 +58,16 @@ void CubRenderer::OnStateChanged()
 		fileName = wontDoFile;
 		break;
 	case CubState::idle:
-		if(actionTriggered)
+		if (actionTriggered)
 		{
 			return;
 		}
+		[[fallthrough]];
 	default:
 		fileName = idleFile;
 		break;
 	}
 	window->SetNewMiddleTexture(fileName);
-}
-
-void CubRenderer::OnFeedActionExecuted()
-{
-	OnActionExecuted(TamActions::feed);
-}
-
-void CubRenderer::OnHealActionExecuted()
-{
-	OnActionExecuted(TamActions::heal);
-}
-
-void CubRenderer::OnCleanActionExecuted()
-{
-	OnActionExecuted(TamActions::clean);
-}
-
-void CubRenderer::OnDisputeActionExecuted()
-{
-	OnActionExecuted(TamActions::dispute);
-}
-
-void CubRenderer::OnDoSportActionExecuted()
-{
-	OnActionExecuted(TamActions::doSport);
 }
 
 void CubRenderer::OnActionExecuted(TamActions action)

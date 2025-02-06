@@ -1,20 +1,15 @@
 #include "Tamagocub.h"
 #include <stdlib.h>
 #include "../CustomRandom.h"
-#include "../Event.h"
 #include <iostream>
 
 using namespace std;
 
 Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), timeSinceLastChanged(0)
 {
-	StateChanged = new Event();
-	FinishedIdling = new Event();
-	FeedActionExecuted = new Event();
-	HealActionExecuted = new Event();
-	CleanActionExecuted = new Event();
-	DisputeActionExecuted = new Event();
-	DoSportActionExecuted = new Event();
+	StateChanged = new Event<>();
+	FinishedIdling = new Event<>();
+	ActionExecuted = new Event<TamActions>();
 	int randomValue = rand();
 	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
 	moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
@@ -62,7 +57,7 @@ void Tamagocub::Feed()
 	}
 
 	weight += weightGainPerFeeding;
-	FeedActionExecuted->fire();
+	ActionExecuted->fire(TamActions::feed);
 
 	if (hunger == maxHunger)
 	{
@@ -83,7 +78,7 @@ void Tamagocub::Heal()
 	{
 		if (GoToNewState(CubState::idle))
 		{
-			HealActionExecuted->fire();
+			ActionExecuted->fire(TamActions::heal);
 			cout << "Here you are little bug." << endl;
 		}
 	}
@@ -95,7 +90,7 @@ void Tamagocub::Clean()
 	{
 		if (GoToNewState(CubState::idle))
 		{
-			CleanActionExecuted->fire();
+			ActionExecuted->fire(TamActions::clean);
 			cout << "Shiny like chrome" << endl;
 		}
 	}
@@ -107,7 +102,7 @@ void Tamagocub::Dispute()
 	{
 		if (GoToNewState(CubState::idle))
 		{
-			DisputeActionExecuted->fire();
+			ActionExecuted->fire(TamActions::dispute);
 			cout << "OBEY ME" << endl;
 		}
 	}
@@ -121,7 +116,7 @@ void Tamagocub::DoSport()
 	}
 
 	weight = max(0.0f, weight - weightLossPerDoingSport);
-	DoSportActionExecuted->fire();
+	ActionExecuted->fire(TamActions::doSport);
 	cout << "Litlle bit of sport won't hurt. You're less fat : " << weight << endl;
 }
 

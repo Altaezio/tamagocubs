@@ -92,28 +92,24 @@ Tamagocub* DataSaver::ParseFileToTamagocub(filesystem::path pathToSaveFile)
 	{
 		string line;
 		getline(saveFile, line);
-		tamagocub->age = stoi(line.substr(4, line.size() - 4));
+		tamagocub->age = stoi(line.substr(4));
 		getline(saveFile, line);
-		tamagocub->ageInSeconds = stof(line.substr(11, line.size() - 11));
+		tamagocub->ageInSeconds = stof(line.substr(11));
 		getline(saveFile, line);
-		tamagocub->weight = stof(line.substr(7, line.size() - 7));
+		tamagocub->weight = stof(line.substr(7));
 		getline(saveFile, line);
-		tamagocub->hunger = stoi(line.substr(7, line.size() - 7));
+		tamagocub->hunger = stoi(line.substr(7));
 		getline(saveFile, line);
-		tamagocub->hungerCountDown = stof(line.substr(16, line.size() - 16));
+		tamagocub->hungerCountDown = stof(line.substr(16));
 		getline(saveFile, line);
-		int stateInt = stoi(line.substr(6, line.size() - 6));
-		CubState state = CubState::idle;
-		if (stateInt == 1)		{			state = CubState::hungry;		}
-		else if (stateInt == 2) { state = CubState::sick; }
-		else if (stateInt == 3) { state = CubState::wet; }
-		else if (stateInt == 4) { state = CubState::wontDo; }
+		int stateInt = stoi(line.substr(6));
+		CubState state = (CubState)stateInt;
 		tamagocub->currentState = state;
 		tamagocub->StateChanged->fire();
 		getline(saveFile, line);
-		tamagocub->timeSinceLastChanged = stof(line.substr(21, line.size() - 21));
+		tamagocub->timeSinceLastChanged = stof(line.substr(21));
 		getline(saveFile, line);
-		tamagocub->moodChangeCountDown = stof(line.substr(20, line.size() - 20));
+		tamagocub->moodChangeCountDown = stof(line.substr(20));
 
 		saveFile.close();
 	}

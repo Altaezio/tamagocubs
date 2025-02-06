@@ -8,12 +8,14 @@
 #include "KeyInput.h"
 #include "DataSaver.h"
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 int main(void)
 {
 	/* Initialize the library */
 	if (!glfwInit())
-		return -1;
-
+		return -1; 
+	
 	Window* myWindow = Window::GetInstance();
 	GLFWwindow* window = myWindow->window;
 
@@ -26,6 +28,7 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -45,14 +48,15 @@ int main(void)
 	KeyInput* keyInput = KeyInput::InitialiseInputs(myWindow, tamagocub);
 
 	myWindow->InitialiseVerticies();
-	//myWindow->SetNewMiddleTexture("Idle.png");
+	myWindow->InitialiseTextShader();
+	myWindow->SetNewMiddleTexture("Idle.png");
 
 	double then = glfwGetTime();
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		double now = glfwGetTime();
-		float deltaTime = now - then;
+		float deltaTime = (float)(now - then);
 		myWindow->Draw();
 		tamagocub->Update(deltaTime);
 		cubRenderer->Update(deltaTime);
@@ -63,4 +67,13 @@ int main(void)
 
 	glfwTerminate();
 	return 0;
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
 }

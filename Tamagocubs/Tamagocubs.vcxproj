@@ -107,13 +107,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include;$(ProjectDir)\Dependencies\STB</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\GLAD\include;$(ProjectDir)Dependencies\GLFW\include;$(ProjectDir)Dependencies\STB;$(ProjectDir)Dependencies\FreeType\include;$(ProjectDir)Dependencies\GLM</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;glfw3dll.lib;opengl32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;glfw3dll.lib;opengl32.lib;freetype.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FreeType\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,15 +125,15 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\GLAD\include;$(ProjectDir)\Dependencies\GLFW\include;$(ProjectDir)\Dependencies\STB</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\GLAD\include;$(ProjectDir)Dependencies\GLFW\include;$(ProjectDir)Dependencies\STB;$(ProjectDir)Dependencies\FreeType\include;$(ProjectDir)Dependencies\GLM</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;glfw3dll.lib;opengl32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;glfw3dll.lib;opengl32.lib;freetype.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FreeType\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -150,6 +150,7 @@
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="Dependencies\STB\stb_image.h" />
     <ClInclude Include="Source\CustomRandom.h" />
+    <ClInclude Include="Source\Renderer\TextRenderer.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\CoreGame\Tamagocub.h" />
@@ -162,6 +163,8 @@
   <ItemGroup>
     <None Include="Dependencies\GLFW\lib-vc2022\glfw3.dll" />
     <None Include="Source\fragments.fs" />
+    <None Include="Source\text.frag" />
+    <None Include="Source\text.vs" />
     <None Include="Source\vertices.vs" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +175,7 @@
     <ClCompile Include="Dependencies\GLAD\src\glad.c" />
     <ClCompile Include="Source\CustomRandom.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Renderer\TextRenderer.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\CoreGame\Tamagocub.cpp" />
   </ItemGroup>

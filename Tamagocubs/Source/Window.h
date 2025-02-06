@@ -5,6 +5,7 @@
 #include <string>
 
 class Shader;
+class TextRenderer;
 
 class Window
 {
@@ -16,10 +17,13 @@ public:
 	const unsigned int WindowWidth = 640, WindowHeight = 640;
 
 	void InitialiseVerticies();
+	void InitialiseTextShader();
 
 	void Draw();
 
 	void SetNewMiddleTexture(std::string);
+
+	TextRenderer* textRenderer;
 
 private:
 	Window();
