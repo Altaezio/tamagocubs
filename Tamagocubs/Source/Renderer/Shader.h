@@ -3,6 +3,7 @@
 #pragma once
 #include <glad/glad.h> // include glad to get all the required OpenGL headers
 #include <glm.hpp>
+#include <gtc/type_ptr.hpp>
 
 #include <string>
 #include <fstream>
@@ -73,32 +74,42 @@ public:
 		glDeleteShader(fragment);
 	}
 	// use/activate the shader
-	void use()
+	void use() const
 	{
 		glUseProgram(ID);
 	}
 	// utility uniform functions
-	void setBool(const std::string& name, bool value) const
+	void setBool(const std::string& name, bool value, bool useShader = false) const
 	{
+		if (useShader)
+			use();
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 	}
-	void setInt(const std::string& name, int value) const
+	void setInt(const std::string& name, int value, bool useShader = false) const
 	{
+		if (useShader)
+			use();
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 	}
-	void setFloat(const std::string& name, float value) const
+	void setFloat(const std::string& name, float value, bool useShader = false) const
 	{
+		if (useShader)
+			use();
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 	}
 
-	void setVector3f(const std::string& name, glm::vec3 value) const
+	void setVector3f(const std::string& name, glm::vec3 value, bool useShader = false) const
 	{
+		if (useShader)
+			use();
 		glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
 	}
 
-	void setMatrix4(const std::string& name, glm::mat4x4 value) const
+	void setMatrix4(const std::string& name, glm::mat4 value, bool useShader = false) const
 	{
-		glUniform4f(glGetUniformLocation(ID, name.c_str()), value[0][0], value[1][0], value[0][1], value[1][1]);
+		if (useShader)
+			use();
+		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, false, glm::value_ptr(value));
 	}
 
 private:

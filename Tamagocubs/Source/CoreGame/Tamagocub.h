@@ -19,36 +19,41 @@ public:
 	void Dispute();
 	void DoSport();
 
-	CubState GetCurrentState() const;
+	CubState GetCurrentState() const { return currentState; };
+	double GetCurrentBlouze() const { return blouze; };
+	double GetCurrentBlouzePerSec() const;
 
 	Event<>* StateChanged;
 	Event<>* FinishedIdling;
 	Event<TamActions>* ActionExecuted;
 
 private:
-	unsigned age;
-	float ageInSeconds;
+	unsigned age; // saved
+	float ageInSeconds; // saved
 	const float secondsPerYear = 216; // 21600s = 6h
 
-	float weight;
+	double blouze; // saved
+	double blouzePerSecond; // saved
+
+	float weight; // saved
 	const float weightGainPerFeeding = 2;
 	const float weightLossPerGettingHungry = 1;
 	const float weightLossPerDoingSport = 3;
 
-	unsigned hunger;
+	unsigned hunger; // saved
 	const unsigned maxHunger = 5;
 	const float timeToGetOneHunger = 18; // 1800s = 30min
 	const float timeHungerOffset = 6;
-	float hungerCountDown;
+	float hungerCountDown; // saved
 
-	CubState currentState;
+	CubState currentState; // saved
 	const float cooldownBetweenChangedState = 6;
-	bool justCameBackIdle() const { return timeSinceLastChanged != 0; }
-	float timeSinceLastChanged;
+	bool justCameBackIdle() const { return timeSinceLastIdle < cooldownBetweenChangedState; }
+	float timeSinceLastIdle; // saved
 
 	const float timeBetweenMoodChange = 27; // 2700 = 45min
 	const float timeBetweenMoodChangeOffset = 9; // 900 = 15min
-	float moodChangeCountDown;
+	float moodChangeCountDown; // saved
 
 	void HappyBirthday();
 	void GettingHungry();

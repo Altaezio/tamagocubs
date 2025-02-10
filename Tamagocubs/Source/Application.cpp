@@ -1,6 +1,6 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "Window.h"
+#include "Renderer/Window.h"
 #include "CoreGame/Tamagocub.h"
 #include "Renderer/CubRenderer.h"
 #include <chrono>
@@ -36,6 +36,9 @@ int main(void)
 		return -1;
 	}
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	Tamagocub* tamagocub = DataSaver::LoadOrCreateTamagocub();
 	if (!tamagocub)
 	{
@@ -47,9 +50,9 @@ int main(void)
 
 	KeyInput* keyInput = KeyInput::InitialiseInputs(myWindow, tamagocub);
 
-	myWindow->InitialiseVerticies();
 	myWindow->InitialiseTextShader();
-	myWindow->SetNewMiddleTexture("Idle.png");
+	myWindow->InitialiseVerticies();
+	myWindow->LoadTextures();
 
 	double then = glfwGetTime();
 	/* Loop until the user closes the window */
@@ -57,9 +60,11 @@ int main(void)
 	{
 		double now = glfwGetTime();
 		float deltaTime = (float)(now - then);
-		myWindow->Draw();
 		tamagocub->Update(deltaTime);
-		cubRenderer->Update(deltaTime);
+
+		myWindow->StartRendering();
+		cubRenderer->Draw(deltaTime);
+		myWindow->StopRendering();
 		then = now;
 	}
 

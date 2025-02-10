@@ -5,7 +5,17 @@
 
 using namespace std;
 
-Tamagocub::Tamagocub() : age(0), ageInSeconds(0), weight(10), hunger(0), currentState(CubState::idle), timeSinceLastChanged(0)
+const double baseBlouzePerSecond = 0.1;
+
+Tamagocub::Tamagocub() :
+	age(0),
+	ageInSeconds(0),
+	blouze(0.0),
+	blouzePerSecond(baseBlouzePerSecond),
+	weight(10),
+	hunger(0),
+	currentState(CubState::idle),
+	timeSinceLastIdle(0)
 {
 	StateChanged = new Event<>();
 	FinishedIdling = new Event<>();
@@ -23,6 +33,8 @@ void Tamagocub::Update(float deltaTime)
 		HappyBirthday();
 	}
 
+	blouze += GetCurrentBlouzePerSec() * deltaTime;
+
 	hungerCountDown -= deltaTime;
 	if (hungerCountDown <= 0)
 	{
@@ -38,10 +50,9 @@ void Tamagocub::Update(float deltaTime)
 
 	if (justCameBackIdle())
 	{
-		timeSinceLastChanged += deltaTime;
-		if (timeSinceLastChanged >= cooldownBetweenChangedState)
+		timeSinceLastIdle += deltaTime;
+		if (timeSinceLastIdle >= cooldownBetweenChangedState)
 		{
-			timeSinceLastChanged = 0;
 			FinishedIdling->fire();
 
 			cout << "Not just came back from idling anymore" << endl;
@@ -120,9 +131,16 @@ void Tamagocub::DoSport()
 	cout << "Litlle bit of sport won't hurt. You're less fat : " << weight << endl;
 }
 
-CubState Tamagocub::GetCurrentState() const
+double Tamagocub::GetCurrentBlouzePerSec() const
 {
-	return currentState;
+	if (currentState != CubState::idle)
+	{
+		return 0.0;
+	}
+	else
+	{
+		return blouzePerSecond;
+	}
 }
 
 void Tamagocub::HappyBirthday()
@@ -189,7 +207,7 @@ bool Tamagocub::GoToNewState(CubState newState)
 
 	if (newState == CubState::idle)
 	{
-		timeSinceLastChanged = 0;
+		timeSinceLastIdle = 0;
 	}
 	return true;
 }

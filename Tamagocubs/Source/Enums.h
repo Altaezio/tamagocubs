@@ -4,4 +4,4 @@
 
 enum class CubState { idle, hungry, sick, wet, wontDo };
 
-enum class TamActions { feed, heal, clean, dispute, doSport };
+enum class TamActions { none, feed, heal, clean, dispute, doSport };

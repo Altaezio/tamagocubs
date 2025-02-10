@@ -1,6 +1,6 @@
 #include "KeyInput.h"
-#include "Window.h"
-#include "./CoreGame/Tamagocub.h"
+#include "Renderer/Window.h"
+#include "CoreGame/Tamagocub.h"
 #include <iostream>
 
 KeyInput* KeyInput::Instance = nullptr;

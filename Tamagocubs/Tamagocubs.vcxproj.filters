@@ -95,9 +95,6 @@
     <ClCompile Include="Source\Renderer\CubRenderer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Event.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\KeyInput.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>

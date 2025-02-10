@@ -12,7 +12,7 @@
 #include <glad/glad.h>
 #include <glm.hpp>
 
-#include "../Shader.h"
+#include "Shader.h"
 
 
 /// Holds all state information relevant to a character as loaded using FreeType
