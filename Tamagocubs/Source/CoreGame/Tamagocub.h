@@ -19,42 +19,55 @@ public:
 	void Dispute();
 	void DoSport();
 
-	CubState GetCurrentState() const { return currentState; };
-	double GetCurrentBlouze() const { return blouze; };
-	double GetCurrentBlouzePerSec() const;
+	unsigned GetAge() const { return age; }
+	double GetBlouze() const { return blouze; };
+	double GetBPS() const;
+	float GetWeight() const { return weight; }
+	unsigned GetHunger()const { return hunger; }
+	CubState GetState() const { return currentState; };
 
 	Event<>* StateChanged;
 	Event<>* FinishedIdling;
 	Event<TamActions>* ActionExecuted;
+	Event<unsigned>* Birthday;
 
+	const float secondsPerYear = 21600; // = 6h (216)
+
+	const float weightGainPerFeeding = 2;
+	const float weightLossPerGettingHungry = 0.25;
+	const float startWeight = 10.0f;
+	const float minGoodWeight = 5.0f;
+	const float maxGoodWeight = 15.0f;
+
+	const unsigned maxHunger = 5;
+	const float timeToGetOneHunger = 1800; // = 30min (18)
+	const float timeHungerOffset = 900; // = 15min	(6)
+
+	const float weightLossPerSport = 1;
+	const float timeToGetHungryFracLostPerSport = 0.1f;
+
+	const float cooldownBetweenChangedState = 6;
+
+	const float timeBetweenMoodChange = 2700; // = 45min (27)
+	const float timeBetweenMoodChangeOffset = 900; // = 15min (9)
 private:
 	unsigned age; // saved
 	float ageInSeconds; // saved
-	const float secondsPerYear = 216; // 21600s = 6h
 
 	double blouze; // saved
 	double blouzePerSecond; // saved
 
 	float weight; // saved
-	const float weightGainPerFeeding = 2;
-	const float weightLossPerGettingHungry = 1;
-	const float weightLossPerDoingSport = 3;
 
 	unsigned hunger; // saved
-	const unsigned maxHunger = 5;
-	const float timeToGetOneHunger = 18; // 1800s = 30min
-	const float timeHungerOffset = 6;
 	float hungerCountDown; // saved
 
 	CubState currentState; // saved
-	const float cooldownBetweenChangedState = 6;
-	bool justCameBackIdle() const { return timeSinceLastIdle < cooldownBetweenChangedState; }
 	float timeSinceLastIdle; // saved
 
-	const float timeBetweenMoodChange = 27; // 2700 = 45min
-	const float timeBetweenMoodChangeOffset = 9; // 900 = 15min
 	float moodChangeCountDown; // saved
 
+	bool JustCameBackIdle() const { return timeSinceLastIdle < cooldownBetweenChangedState; }
 	void HappyBirthday();
 	void GettingHungry();
 	void ChangeMood();

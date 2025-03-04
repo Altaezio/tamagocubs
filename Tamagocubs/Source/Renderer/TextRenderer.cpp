@@ -99,6 +99,8 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
 	// destroy FreeType once we're finished
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
+
+	cSize = glm::vec2(1.5f * Characters['M'].Size.x, 1.5f * Characters['M'].Size.y);
 }
 
 void TextRenderer::RenderText(std::string text, float x, float y, float scale, glm::vec3 color)

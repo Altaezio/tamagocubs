@@ -9,6 +9,7 @@
 class Shader;
 class TextRenderer;
 class Texture;
+class AnimatedTexture;
 
 class Window
 {
@@ -23,12 +24,17 @@ public:
 	void InitialiseTextShader();
 
 	Texture& LoadTexture(const char* file, std::string name);
+	AnimatedTexture& LoadAnimatedTexture(const char* file, std::string name, unsigned spriteWidth, unsigned spriteHeight, float framePerSec);
 	void LoadTextures();
 
 	void StartRendering();
 	void StopRendering();
 
-	void DrawImage(std::string textureName, glm::vec2 position, glm::vec2 scale = glm::vec2(1.0), float rotation = 0.0f, glm::vec3 color = glm::vec3(1.0));
+	void DrawImage(std::string textureName, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec3 color = glm::vec3(1.0), bool keepRatio = false);
+	void DrawAnimatedImage(float deltaTime, std::string textureName, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec3 color = glm::vec3(1.0), bool keepRatio = false);
+	void ResetAnimation(std::string textureName);
+
+	const AnimatedTexture& GetAnimTexture(std::string name);
 
 	TextRenderer* textRenderer;
 
@@ -36,9 +42,10 @@ private:
 	Window();
 	~Window();
 
-	unsigned int VAO;
+	unsigned int staticVAO, animatedVAO;
 	Shader* shader;
 	std::map<std::string, Texture> textures;
+	std::map<std::string, AnimatedTexture> animatedTextures;
 
 	static Window* Instance;
 };

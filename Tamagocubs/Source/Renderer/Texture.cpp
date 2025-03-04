@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include <glad/glad.h>
 
 Texture::Texture() : Width(0), Height(0)
 {

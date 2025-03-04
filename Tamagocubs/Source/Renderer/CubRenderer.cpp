@@ -1,21 +1,12 @@
 #include "CubRenderer.h"
+#include <format>
 #include "../CoreGame/Tamagocub.h"
 #include "../Event.h"
 #include "../EventCallback.h"
 #include "TextRenderer.h"
+#include "AnimatedTexture.h"
 
 using namespace std;
-
-const string idleFile = "Idle.png";
-const string hungryFile = "Hungry.png";
-const string sickFile = "Sick.png";
-const string wetFile = "Wet.png";
-const string wontDoFile = "WontDo.png";
-const string disputeFile = "Dispute.png";
-const string fedFile = "Fed.png";
-const string healFile = "Heal.png";
-const string cleanFile = "Clean.png";
-const string doSport = "Sport.png";
 
 
 CubRenderer::CubRenderer(Window* window, Tamagocub* tamagocub) :
@@ -25,7 +16,9 @@ CubRenderer::CubRenderer(Window* window, Tamagocub* tamagocub) :
 	actionTimeLeft(actionShownTime),
 	lastAction(TamActions::none)
 {
+	tamagocub->StateChanged->addListener(new EventCallback(this, &CubRenderer::OnStateChaged));
 	tamagocub->ActionExecuted->addListener(new EventCallback(this, &CubRenderer::OnActionExecuted));
+	tamagocub->Birthday->addListener(new EventCallback(this, &CubRenderer::OnBirthday));
 }
 
 void CubRenderer::Draw(float deltaTime)
@@ -39,74 +32,162 @@ void CubRenderer::Draw(float deltaTime)
 			actionTimeLeft = actionShownTime;
 		}
 	}
-	CubState currentState = tamagocub->GetCurrentState();
-	string cubImage = GetStateFileName(currentState);
+	CubState currentState = tamagocub->GetState();
+	string cubImage = GetStateImageName(currentState);
 	if (actionTriggered && lastAction != TamActions::none)
 	{
-		cubImage = GetActionFileName(lastAction);
+		cubImage = GetActionImageName(lastAction);
 	}
-	window->DrawImage(cubImage, glm::vec2(1.0f));
+	glm::vec2 size(225);
+	glm::vec2 pos(.5f * (window->WindowWidth - size.x), .5f * (window->WindowHeight - size.y));
+	if (!partyBirthday)
+	{
+		if (cubImage.substr(cubImage.size() - 4) == "Anim")
+		{
+			window->DrawAnimatedImage(deltaTime, cubImage, pos, size, 0.0f, glm::vec3(1.0f), true);
+		}
+		else
+		{
+			window->DrawImage(cubImage, pos, size, 0.0f, glm::vec3(1.0f), true);
+		}
 
-	char blouze[20];
-	snprintf(blouze, 20, "Blouze: %.0f (%+.1f/s)", tamagocub->GetCurrentBlouze(), tamagocub->GetCurrentBlouzePerSec());
-	window->textRenderer->RenderText(blouze, 5.0f, 5.0f, 1.0f);
+		glm::vec2 reactionCenteredPos(0.5f * window->WindowWidth, 0.8f * window->WindowHeight);
+		ShowReactionMessage(reactionCenteredPos);
+	}
+	else
+	{
+		const AnimatedTexture& birthdayTex = window->GetAnimTexture("birthdayAnim");
+		if (birthdayTex.currentTime + deltaTime > birthdayTex.GetTotalFrame() * birthdayTex.secondsPerFrame)
+		{
+			partyBirthday = false;
+		}
+		else
+		{
+			window->DrawAnimatedImage(deltaTime, "birthdayAnim", pos, size, 0.0f, glm::vec3(1.0f), true);
+			string hb = format("Happy {0:}th Birthday!", tamagocub->GetAge());
+			glm::vec2 hbPos(0.5f * (window->WindowWidth - hb.size() * window->textRenderer->cSize.x), 0.65f * window->WindowHeight);
+			window->textRenderer->RenderText(hb, hbPos);
+		}
+	}
+
+	string blouze = format("Blouze: {0:.0f} ({1:+.2f}/s)", tamagocub->GetBlouze(), tamagocub->GetBPS());
+	window->textRenderer->RenderText(blouze, .5f * (window->WindowWidth - blouze.size() * window->textRenderer->cSize.x), 5.0f);
+
+	string sport = format("Do (S)port");
+	glm::vec2 sportPos(10.0f, window->WindowHeight - window->textRenderer->cSize.x - 10.0f);
+	window->textRenderer->RenderText(sport, sportPos);
+
+	string weight = format("Weight: {0:}", tamagocub->GetWeight());
+	glm::vec2 weightPos(sportPos.x, sportPos.y - window->textRenderer->cSize.y - 5.0f);
+	window->textRenderer->RenderText(weight, weightPos);
+
+	string feed = format("(F)eed");
+	glm::vec2 feedPos(window->WindowWidth - feed.size() * window->textRenderer->cSize.x, window->WindowHeight - window->textRenderer->cSize.x - 10.0f);
+	window->textRenderer->RenderText(feed, feedPos);
+
+	string hunger = format("Hunger: {0:}/{1:}", tamagocub->GetHunger(), tamagocub->maxHunger);
+	glm::vec2 hungerPos(window->WindowWidth - hunger.size() * window->textRenderer->cSize.x, feedPos.y - window->textRenderer->cSize.y - 5.0f);
+	window->textRenderer->RenderText(hunger, hungerPos);
 }
 
-string CubRenderer::GetStateFileName(CubState state) const
+void CubRenderer::OnStateChaged()
 {
-	string fileName;
+	CubState currentState = tamagocub->GetState();
+	window->ResetAnimation(GetStateImageName(currentState));
+}
+
+string CubRenderer::GetStateImageName(CubState state) const
+{
+	string imageName;
 	switch (state)
 	{
 	case CubState::hungry:
-		fileName = "hungry";
+		imageName = "hungryAnim";
 		break;
 	case CubState::sick:
-		fileName = "sick";
+		imageName = "sick";
 		break;
 	case CubState::wet:
-		fileName = "wet";
+		imageName = "wetAnim";
 		break;
 	case CubState::wontDo:
-		fileName = "wontDo";
+		imageName = "wontDo";
 		break;
 	case CubState::idle:
 		[[fallthrough]];
 	default:
-		fileName = "idle";
+		imageName = "idleAnim";
 		break;
 	}
-	return fileName;
+	return imageName;
 }
 
 void CubRenderer::OnActionExecuted(TamActions action)
 {
 	lastAction = action;
 	actionTriggered = true;
+	window->ResetAnimation(GetActionImageName(action));
 }
 
-string CubRenderer::GetActionFileName(TamActions action) const
+string CubRenderer::GetActionImageName(TamActions action) const
 {
-	string fileName;
+	string imageName;
 	switch (action)
 	{
 	case TamActions::feed:
-		fileName = "fed";
+		imageName = "feedAnim";
 		break;
 	case TamActions::heal:
-		fileName = "heal";
+		imageName = "healAnim";
 		break;
 	case TamActions::clean:
-		fileName = "clean";
+		imageName = "clean";
 		break;
 	case TamActions::dispute:
-		fileName = "dispute";
+		imageName = "dispute";
 		break;
 	case TamActions::doSport:
-		fileName = "sport";
+		imageName = "sportAnim";
 		break;
 	default:
-		fileName = "idle";
+		imageName = "idleAnim";
 		break;
 	}
-	return fileName;
+	return imageName;
+}
+
+void CubRenderer::OnBirthday(unsigned newAge)
+{
+	partyBirthday = true;
+	window->ResetAnimation("birthdayAnim");
+}
+
+void CubRenderer::ShowReactionMessage(glm::vec2 centeredPos)
+{
+	string text = "";
+	switch (tamagocub->GetState())
+	{
+	case CubState::hungry:
+		text = "Too hungry, (F)eed it";
+		break;
+	case CubState::sick:
+		text = "Too sad, (H)ug it";
+		break;
+	case CubState::wet:
+		text = "Too wet, (C)lean it";
+		break;
+	case CubState::wontDo:
+		text = "Don't want to do, (D)ispute it";
+		break;
+	case CubState::idle:
+		break;
+	default:
+		break;
+	}
+	if (text.size() == 0)
+	{
+		return;
+	}
+	glm::vec2 leftPos(centeredPos.x - 0.5f * text.size() * window->textRenderer->cSize.x, centeredPos.y);
+	window->textRenderer->RenderText(text, leftPos);
 }

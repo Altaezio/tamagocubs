@@ -98,6 +98,13 @@ public:
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 	}
 
+	void setVector2f(const std::string& name, glm::vec2 value, bool useShader = false) const
+	{
+		if (useShader)
+			use();
+		glUniform2f(glGetUniformLocation(ID, name.c_str()), value.x, value.y);
+	}
+
 	void setVector3f(const std::string& name, glm::vec3 value, bool useShader = false) const
 	{
 		if (useShader)

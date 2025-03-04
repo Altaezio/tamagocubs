@@ -12,7 +12,7 @@ Tamagocub::Tamagocub() :
 	ageInSeconds(0),
 	blouze(0.0),
 	blouzePerSecond(baseBlouzePerSecond),
-	weight(10),
+	weight(startWeight),
 	hunger(0),
 	currentState(CubState::idle),
 	timeSinceLastIdle(0)
@@ -20,6 +20,7 @@ Tamagocub::Tamagocub() :
 	StateChanged = new Event<>();
 	FinishedIdling = new Event<>();
 	ActionExecuted = new Event<TamActions>();
+	Birthday = new Event<unsigned>();
 	int randomValue = rand();
 	hungerCountDown = CustomRandom::RandomFloatOffset(timeToGetOneHunger, timeHungerOffset);
 	moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
@@ -33,7 +34,7 @@ void Tamagocub::Update(float deltaTime)
 		HappyBirthday();
 	}
 
-	blouze += GetCurrentBlouzePerSec() * deltaTime;
+	blouze += GetBPS() * deltaTime;
 
 	hungerCountDown -= deltaTime;
 	if (hungerCountDown <= 0)
@@ -48,7 +49,7 @@ void Tamagocub::Update(float deltaTime)
 		moodChangeCountDown = CustomRandom::RandomFloatOffset(timeBetweenMoodChange, timeBetweenMoodChangeOffset);
 	}
 
-	if (justCameBackIdle())
+	if (JustCameBackIdle())
 	{
 		timeSinceLastIdle += deltaTime;
 		if (timeSinceLastIdle >= cooldownBetweenChangedState)
@@ -126,12 +127,13 @@ void Tamagocub::DoSport()
 		return;
 	}
 
-	weight = max(0.0f, weight - weightLossPerDoingSport);
+	weight = max(0.0f, weight - weightLossPerSport);
+	hungerCountDown -= timeToGetHungryFracLostPerSport * timeToGetOneHunger;
 	ActionExecuted->fire(TamActions::doSport);
 	cout << "Litlle bit of sport won't hurt. You're less fat : " << weight << endl;
 }
 
-double Tamagocub::GetCurrentBlouzePerSec() const
+double Tamagocub::GetBPS() const
 {
 	if (currentState != CubState::idle)
 	{
@@ -139,20 +141,34 @@ double Tamagocub::GetCurrentBlouzePerSec() const
 	}
 	else
 	{
-		return blouzePerSecond;
+		if (weight < minGoodWeight)
+		{
+			return blouzePerSecond * (weight / minGoodWeight);
+		}
+		else if (weight > maxGoodWeight)
+		{
+			return blouzePerSecond * (maxGoodWeight / weight);
+		}
+		else
+		{
+			return blouzePerSecond;
+
+		}
 	}
+
 }
 
 void Tamagocub::HappyBirthday()
 {
 	age++;
 	ageInSeconds -= secondsPerYear;
+	Birthday->fire(age);
 	cout << "Happy birthday !! Age : " << age << endl;
 }
 
 void Tamagocub::GettingHungry()
 {
-	weight -= max(0.0f, weight - weightLossPerGettingHungry);
+	weight = max(0.0f, weight - weightLossPerGettingHungry);
 	hunger = min(maxHunger, hunger + 1);
 	if (hunger == maxHunger)
 	{
@@ -190,7 +206,7 @@ void Tamagocub::ChangeMood()
 
 bool Tamagocub::GoToNewState(CubState newState)
 {
-	if (currentState == CubState::idle && justCameBackIdle() && hunger != maxHunger) // should only change from idle ?
+	if (currentState == CubState::idle && JustCameBackIdle() && hunger != maxHunger) // should only change from idle ?
 	{
 		return false;
 	}

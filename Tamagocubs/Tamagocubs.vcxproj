@@ -143,6 +143,7 @@
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\EventCallback.h" />
     <ClInclude Include="Source\KeyInput.h" />
+    <ClInclude Include="Source\Renderer\AnimatedTexture.h" />
     <ClInclude Include="Source\Renderer\CubRenderer.h" />
     <ClInclude Include="Dependencies\GLAD\include\glad\glad.h" />
     <ClInclude Include="Dependencies\GLAD\include\KHR\khrplatform.h" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClCompile Include="Source\DataSaver.cpp" />
     <ClCompile Include="Source\KeyInput.cpp" />
+    <ClCompile Include="Source\Renderer\AnimatedTexture.cpp" />
     <ClCompile Include="Source\Renderer\CubRenderer.cpp" />
     <ClCompile Include="Dependencies\GLAD\src\glad.c" />
     <ClCompile Include="Source\CustomRandom.cpp" />
